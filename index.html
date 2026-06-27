@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You have a message 💌</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#1a1a2e;background:linear-gradient(135deg,#16213e 0%,#0f3460 50%,#e94560 100%);font-family:'Poppins',sans-serif;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    
+    .hearts{position:fixed;width:100%;height:100%;pointer-events:none}
+    .heart{position:absolute;font-size:20px;animation:float 6s infinite;opacity:0.6}
+    @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0}50%{opacity:0.6}100%{transform:translateY(-100vh) rotate(360deg);opacity:0}}
+    
+    .container{text-align:center;z-index:10;padding:20px}
+    .envelope{width:300px;height:200px;background:#fff;position:relative;margin:0 auto 30px;cursor:pointer;transition:0.3s;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+    .envelope:hover{transform:translateY(-10px) scale(1.05)}
+    .envelope::before{content:'';position:absolute;top:0;left:0;border-left:150px solid transparent;border-right:150px solid transparent;border-top:100px solid #ff6b9d;transform-origin:top;transition:0.6s}
+    .envelope.open::before{transform:rotateX(180deg);z-index:1}
+    .envelope::after{content:'💌';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:60px;animation:beat 1.5s infinite}
+    @keyframes beat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.2)}}
+    
+    .text{color:#fff;margin-bottom:30px}
+    .text h1{font-family:'Dancing Script',cursive;font-size:3rem;margin-bottom:10px;text-shadow:0 0 20px rgba(233,69,96,0.8)}
+    .text p{font-size:1.1rem;opacity:0.9}
+    
+    .input-box{display:none}
+    .input-box.show{display:block;animation:slideUp 0.5s}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .input-box input{padding:15px 25px;border:none;border-radius:50px;font-size:1.1rem;width:280px;text-align:center;margin-bottom:20px;outline:none}
+    .input-box button{padding:15px 40px;background:#e94560;color:#fff;border:none;border-radius:50px;font-size:1.1rem;font-weight:600;cursor:pointer;transition:0.3s}
+    .input-box button:hover{background:#ff6b9d;transform:scale(1.05)}
+    
+    .letter{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:100;padding:20px}
+    .letter.show{display:flex}
+    .paper{background:#fffef0;padding:50px 40px;border-radius:20px;max-width:600px;width:100%;position:relative;animation:paperIn 0.8s;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+    @keyframes paperIn{from{transform:rotateY(90deg) scale(0.5);opacity:0}to{transform:rotateY(0) scale(1);opacity:1}}
+    .paper::before{content:'';position:absolute;top:0;left:50px;right:50px;height:100%;background:repeating-linear-gradient(transparent,transparent 31px,#ffb3c6 31px,#ffb3c6 32px);pointer-events:none}
+    .paper h2{font-family:'Dancing Script',cursive;font-size:3rem;color:#e94560;text-align:center;margin-bottom:30px;position:relative}
+    .paper .content{font-size:1.1rem;line-height:2;color:#333;position:relative;text-align:center}
+    .paper .from{text-align:right;margin-top:30px;font-family:'Dancing Script',cursive;font-size:2rem;color:#e94560}
+    .close{position:absolute;top:20px;right:20px;background:#e94560;color:#fff;border:none;width:45px;height:45px;border-radius:50%;font-size:1.5rem;cursor:pointer}
+    
+    .music-btn{position:fixed;bottom:30px;right:30px;background:#fff;color:#e94560;border:none;width:60px;height:60px;border-radius:50%;font-size:1.5rem;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:50}
+    
+    @media (max-width:600px){.text h1{font-size:2.2rem}.envelope{width:250px;height:170px}.envelope::before{border-left:125px solid transparent;border-right:125px solid transparent;border-top:85px solid #ff6b9d}.paper{padding:40px 25px}}
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+  
+  <div class="container">
+    <div class="envelope" id="envelope"></div>
+    <div class="text">
+      <h1>Someone sent you a secret letter 💕</h1>
+      <p>Tap the envelope to reveal</p>
+    </div>
+    <div class="input-box" id="inputBox">
+      <input type="text" id="nameInput" placeholder="Enter your name..." maxlength="20">
+      <br>
+      <button id="openBtn">Open Letter ✨</button>
+    </div>
+  </div>
+
+  <div class="letter" id="letter">
+    <div class="paper">
+      <button class="close" id="closeBtn">×</button>
+      <h2>For <span id="userName"></span> ❤️</h2>
+      <div class="content">
+        <p>Hey you! 👋</p>
+        <p style="margin:20px 0">I don't know if you'll ever read this, but I had to tell you...</p>
+        <p style="font-size:1.3rem;color:#e94560;font-weight:600">You make my world brighter just by existing ✨</p>
+        <p style="margin:20px 0">Your smile is my favorite notification.<br>Your happiness is my priority.</p>
+        <p>Maybe one day I'll have the courage to say this to your face.<br>Until then, this letter will hold my feelings.</p>
+      </div>
+      <div class="from">- Someone who cares 💝</div>
+    </div>
+  </div>
+
+  <button class="music-btn" id="musicBtn">🎵</button>
+  <audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const hearts = document.getElementById('hearts');
+    for(let i=0;i<20;i++){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.innerHTML = '❤️';
+      h.style.left = Math.random()*100+'%';
+      h.style.animationDelay = Math.random()*6+'s';
+      h.style.fontSize = (Math.random()*15+10)+'px';
+      hearts.appendChild(h);
+    }
+
+    const envelope = document.getElementById('envelope');
+    const inputBox = document.getElementById('inputBox');
+    const openBtn = document.getElementById('openBtn');
+    const letter = document.getElementById('letter');
+    const userName = document.getElementById('userName');
+    const nameInput = document.getElementById('nameInput');
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let playing = false;
+
+    envelope.onclick = () => {
+      envelope.classList.add('open');
+      setTimeout(()=>{
+        document.querySelector('.text').style.display='none';
+        inputBox.classList.add('show');
+      },600);
+    }
+
+    openBtn.onclick = () => {
+      const name = nameInput.value.trim();
+      if(name===''){alert('Please enter your name 😊');return;}
+      userName.textContent = name;
+      letter.classList.add('show');
+      if(!playing){music.play();playing=true;musicBtn.innerHTML='🔇';}
+    }
+
+    document.getElementById('closeBtn').onclick = () => letter.classList.remove('show');
+    musicBtn.onclick = () => {
+      if(playing){music.pause();musicBtn.innerHTML='🎵';}
+      else{music.play();musicBtn.innerHTML='🔇';}
+      playing = !playing;
+    }
+    nameInput.addEventListener('keypress',e=>{if(e.key==='Enter')openBtn.click()});
+  </script>
+</body>
+</html>
